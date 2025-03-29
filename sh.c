@@ -68,15 +68,49 @@ void runcmd(struct cmd *cmd)
             ecmd = (struct execcmd *) cmd;
             if (ecmd->argv[0] == 0)
                 exit(0);
+
+            int return_value = 0;
             // Eliminar el mensaje de error e implementar
-            // la ejecución de comandos.
-            fprintf(stderr, "EXEC no implementado\n");
+            // la ejecución de comandos
+            /* 
+             Utilizo execvp ya que al utilizar comandos ingresados por el usuario, no siempre se tiene el path del ejecutable completo, 
+             y se pueden pasar todos los parámetros como una lista. 
+             El primer parámetro es el path del ejecutable desde PATH, el segundo es la lista de argumentos.
+            */
+            return_value = execvp(ecmd->argv[0], ecmd->argv); 
+
+            if (return_value == -1) {
+                fprintf(stderr, "Error al ejecutar el comando.\n");
+            }
+
             break;
 
         case REDIR:
             // Eliminar el mensaje de error e implementar
             // la redirección de entrada y salida estándar.
-            fprintf(stderr, "REDIR no implementado\n");
+            rcmd = (struct redircmd *) cmd;
+            rcmd -> fd = open(rcmd -> file, rcmd -> mode, 0644);
+
+            if (rcmd -> fd < 0) { // Devuelvo un error si no se puede abrir el archivo
+                perror("Error al abrir el archivo");
+                return;
+            }
+
+            /*
+                Si los permisos de rcmd son de READ ONLY, eso quiere decir que se quiere leer el archivo e imprimir en la salida estándar, sino
+                es que se va a redirigir de la entrada estándar a un archivo.
+            */
+
+            if ((rcmd -> mode) == O_RDONLY) { 
+                close(STDIN_FILENO); //Acá queremos que la entrada estándar venga del archivo y no la del usuario, por lo tanto se cierra y se redirige con dup.
+            } else {
+                close(STDOUT_FILENO); //Acá queremos que la salida estándar sea el archivo y no la del usuario, por lo tanto se cierra y se redirige con dup.
+            }
+
+            dup(rcmd -> fd);
+            runcmd(rcmd-> cmd);
+            close(rcmd -> fd);
+            // fprintf(stderr, "REDIR no implementado\n");
             /* USAR el siguiente código para castear cmd a redircmd
             rcmd = (struct redircmd *) cmd;
             runcmd(rcmd->cmd);
