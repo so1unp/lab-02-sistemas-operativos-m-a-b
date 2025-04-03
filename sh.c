@@ -78,7 +78,7 @@ void runcmd(struct cmd *cmd)
             execvp(ecmd->argv[0], ecmd->argv); 
 
             perror("Error al ejecutar el comando exec");
-            
+
             break;
 
         case REDIR:
