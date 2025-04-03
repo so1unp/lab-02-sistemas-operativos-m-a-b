@@ -68,8 +68,6 @@ void runcmd(struct cmd *cmd)
             ecmd = (struct execcmd *) cmd;
             if (ecmd->argv[0] == 0)
                 exit(0);
-
-            int return_value = 0;
             // Eliminar el mensaje de error e implementar
             // la ejecución de comandos
             /* 
@@ -77,18 +75,18 @@ void runcmd(struct cmd *cmd)
              y se pueden pasar todos los parámetros como una lista. 
              El primer parámetro es el path del ejecutable desde PATH, el segundo es la lista de argumentos.
             */
-            return_value = execvp(ecmd->argv[0], ecmd->argv); 
+            execvp(ecmd->argv[0], ecmd->argv); 
 
-            if (return_value == -1) {
-                fprintf(stderr, "Error al ejecutar el comando.\n");
-            }
-
+            perror("Error al ejecutar el comando exec");
+            
             break;
 
         case REDIR:
-            // Eliminar el mensaje de error e implementar
-            // la redirección de entrada y salida estándar.
+            // casteamos cmd a redircmd
             rcmd = (struct redircmd *) cmd;
+            /*
+                Abrir el archivo con los permisos especificados
+            */
             rcmd -> fd = open(rcmd -> file, rcmd -> mode, 0644);
 
             if (rcmd -> fd < 0) { // Devuelvo un error si no se puede abrir el archivo
@@ -106,7 +104,7 @@ void runcmd(struct cmd *cmd)
             } else {
                 close(STDOUT_FILENO); //Acá queremos que la salida estándar sea el archivo y no la del usuario, por lo tanto se cierra y se redirige con dup.
             }
-
+            
             dup(rcmd -> fd);
             runcmd(rcmd-> cmd);
             close(rcmd -> fd);
