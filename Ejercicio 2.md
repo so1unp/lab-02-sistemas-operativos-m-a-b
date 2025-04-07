@@ -1,4 +1,5 @@
-# Ejercicio 2 - Llamadas al Sistema
+# Sistemas Operativos - Laboratorio 2 - Mariano Bonansea, Agustin Medina, Brandon Amarillo
+## Ejercicio 2 - Llamadas al Sistema
 
 ## Traza de llamadas al sistema en Linux
 
