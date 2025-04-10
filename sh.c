@@ -118,11 +118,32 @@ void runcmd(struct cmd *cmd)
         case PIPE:
             // Eliminar el mensaje de error e implementar
             // la interconexión de procesos mediante tuberías
-            fprintf(stderr, "PIPE no implementado");
-            /* USAR el siguiente código para castear cmd a redircmd
             pcmd = (struct pipecmd *) cmd;
-            runcmd(pcmd->left);
+            
+
+            int pipefd[2];
+            pipe(pipefd);
+            
+            if (fork() == 0) { //hijo
+                close(1);
+                dup(pipefd[1]);
+                close(pipefd[0]);
+                runcmd(pcmd -> left);
+            } else { //padre
+                close(0);
+                dup(pipefd[0]);
+                close(pipefd[1]);
+                runcmd(pcmd -> right);
+            }
+            
+
+
+
+            // fprintf(stderr, "PIPE no implementado");
+            /* USAR el siguiente código para castear cmd a redircmd
+            
             */
+            // runcmd(pcmd->left);
             break;
     }
     exit(0);
