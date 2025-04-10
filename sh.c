@@ -134,11 +134,13 @@ void runcmd(struct cmd *cmd)
                 dup(pipefd[1]);
                 close(pipefd[0]);
                 runcmd(pcmd -> left);
+                wait(NULL);
             } else { //padre
                 close(0);
                 dup(pipefd[0]);
                 close(pipefd[1]);
                 runcmd(pcmd -> right);
+                wait(NULL);
             }
             
 
