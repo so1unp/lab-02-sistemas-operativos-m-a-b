@@ -63,16 +63,14 @@ $[16] sys_write: 1
  [16] sys_write: 1
 ```
 
-1. **`sys_trace`**: Esta llamada se invoca para activar la traza de llamadas al sistema. Es la primera llamada registrada y no tiene un efecto directo en la ejecución del comando `echo`.
+1. **`sys_wait`**: Se utiliza para esperar a que los procesos hijos terminen su ejecución. Esto ocurre antes y después de ejecutar el comando `echo`.
 
-2. **`sys_wait`**: Se utiliza para esperar a que los procesos hijos terminen su ejecución. Esto ocurre antes y después de ejecutar el comando `echo`.
+2. **`sys_write`**: Esta llamada se invoca varias veces para escribir en la salida estándar (`stdout`). En este caso, se utiliza para mostrar el prompt (`$`), el texto `echo hola`, y cada carácter de la palabra `hola` en la salida estándar.
 
-3. **`sys_write`**: Esta llamada se invoca varias veces para escribir en la salida estándar (`stdout`). En este caso, se utiliza para mostrar el prompt (`$`), el texto `echo hola`, y cada carácter de la palabra `hola` en la salida estándar.
+3. **`sys_read`**: Se invoca repetidamente para leer la entrada estándar (`stdin`). Aunque no se proporciona entrada adicional en este caso, el shell realiza estas llamadas para verificar si hay datos disponibles.
 
-4. **`sys_read`**: Se invoca repetidamente para leer la entrada estándar (`stdin`). Aunque no se proporciona entrada adicional en este caso, el shell realiza estas llamadas para verificar si hay datos disponibles.
+4. **`sys_fork`**: Se invoca para crear un nuevo proceso hijo que ejecutará el comando `echo hola`. Esto es necesario porque el shell utiliza un modelo de bifurcación para ejecutar comandos.
 
-5. **`sys_fork`**: Se invoca para crear un nuevo proceso hijo que ejecutará el comando `echo hola`. Esto es necesario porque el shell utiliza un modelo de bifurcación para ejecutar comandos.
+5. **`sys_sbrk`**: Esta llamada se utiliza para ajustar el tamaño del espacio de memoria del proceso. En este caso, se asigna memoria adicional al proceso hijo.
 
-6. **`sys_sbrk`**: Esta llamada se utiliza para ajustar el tamaño del espacio de memoria del proceso. En este caso, se asigna memoria adicional al proceso hijo.
-
-7. **`sys_exec`**: Se invoca para reemplazar el contenido del proceso hijo con el programa `echo`. Esto permite que el proceso hijo ejecute el comando `echo hola`.
+6. **`sys_exec`**: Se invoca para reemplazar el contenido del proceso hijo con el programa `echo`. Esto permite que el proceso hijo ejecute el comando `echo hola`.
