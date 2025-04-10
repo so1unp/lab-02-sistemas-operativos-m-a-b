@@ -122,7 +122,12 @@ void runcmd(struct cmd *cmd)
             
 
             int pipefd[2];
-            pipe(pipefd);
+            
+
+            if (pipe(pipefd) < 0) { // Devuelvo un error si no se puede abrir el archivo
+                perror("Error al crear el pipe");
+                return;
+            }
             
             if (fork() == 0) { //hijo
                 close(1);
