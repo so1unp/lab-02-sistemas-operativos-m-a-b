@@ -73,8 +73,6 @@ void runcmd(struct cmd *cmd)
         ecmd = (struct execcmd *)cmd;
         if (ecmd->argv[0] == 0)
             exit(0);
-        // Eliminar el mensaje de error e implementar
-        // la ejecución de comandos
         /*
          Utilizo execvp ya que al utilizar comandos ingresados por el usuario, no siempre se tiene el path del ejecutable completo,
          y se pueden pasar todos los parámetros como una lista.
@@ -104,7 +102,6 @@ void runcmd(struct cmd *cmd)
             Si los permisos de rcmd son de READ ONLY, eso quiere decir que se quiere leer el archivo e imprimir en la salida estándar, sino
             es que se va a redirigir de la entrada estándar a un archivo.
         */
-
         if ((rcmd->mode) == O_RDONLY)
         {
             close(STDIN_FILENO); // Acá queremos que la entrada estándar venga del archivo y no la del usuario, por lo tanto se cierra y se redirige con dup.
@@ -114,20 +111,16 @@ void runcmd(struct cmd *cmd)
             close(STDOUT_FILENO); // Acá queremos que la salida estándar sea el archivo y no la del usuario, por lo tanto se cierra y se redirige con dup.
         }
 
-        dup(rcmd->fd);
-        runcmd(rcmd->cmd);
-        close(rcmd->fd);
-        // fprintf(stderr, "REDIR no implementado\n");
-        /* USAR el siguiente código para castear cmd a redircmd
-        rcmd = (struct redircmd *) cmd;
-        runcmd(rcmd->cmd);
-        */
+        dup(rcmd->fd);     // Redirige la entrada/salida estándar al archivo abierto
+        runcmd(rcmd->cmd); // Ejecuta el comando redirigido
+        close(rcmd->fd);   // Cierra el descriptor de archivo después de redirigir
         break;
 
     case PIPE:
-        // Implementar la interconexión de procesos mediante tuberías usando dup2
+        // casteamos cmd a pipecmd
         pcmd = (struct pipecmd *)cmd;
 
+        // Se crea un arreglo de enteros para el pipe (lectura y escritura)
         int pipefd[2];
 
         if (pipe(pipefd) < 0)
